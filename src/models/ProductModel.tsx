@@ -1,26 +1,19 @@
 import { Timestamp } from "firebase/firestore";
 
-enum sizes {
-  sm = "Small",
-  md = "Medium",
-  lg = "Large",
-}
-
-interface SizeOptions {
-  size: sizes;
+export interface ProductVariantsModel {
+  name: string;
   price: number;
-  stock: number;
+  cost: number;
 }
 
 export interface ProductModel {
   id?: string;
-  item_name: string;
+  name: string;
   category_id: string;
-  sizes?: SizeOptions[];
+  variants?: ProductVariantsModel[];
   price?: number;
   cost: number;
   stock: number;
-  reorderLevel?: number;
+  dateAdded: Timestamp;
   lastModified: Timestamp;
-  modifiedBy: string;
 }
