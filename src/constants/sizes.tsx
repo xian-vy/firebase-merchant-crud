@@ -7,8 +7,24 @@ export const AVATAR_SIZE_SM = {
   height: 24,
 };
 
-export const DRAWER_WIDTH = 250;
+export const DRAWER_WIDTH = 220;
 export const DRAWER_WIDTH_COLLAPSED = 60;
-export const ICON_SM = "14px";
-export const ICON_MD = "16px";
-export const ICON_LG = "20px";
+export const ICON_SM = "18px";
+export const ICON_MD = "20px";
+export const ICON_LG = "26px";
+export const FORM_BUTTON_WIDTH = 160;
+export const FORM_BUTTON_WIDTH_XS = 240;
+
+export const CATEGORY_ITEM_STYLE = {
+  py: 0.5,
+  px: 1,
+  display: "flex",
+  flexDirection: { xs: "column", sm: "row" },
+  justifyContent: "center",
+  alignItems: "center",
+  cursor: "pointer",
+  bgcolor: "inherit",
+  borderRadius: 2,
+  WebkitTapHighlightColor: "transparent",
+  width: { xs: 40, sm: "auto" },
+};
