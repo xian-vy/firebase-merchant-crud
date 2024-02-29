@@ -1,33 +1,12 @@
 import { createTheme, responsiveFontSizes } from "@mui/material/styles";
 
 const commonTypography = {
-  fontFamily: 'Roboto, "Helvetica", "Arial", sans-serif',
-  h1: {
-    fontSize: "2rem",
-  },
-  h2: {
-    fontSize: "1.8rem",
-  },
-  h3: {
-    fontSize: "1.5rem",
-  },
-  h4: {
-    fontSize: "0.94rem",
-  },
-  h5: {
-    fontSize: "0.9rem",
-  },
-  h6: {
-    fontSize: "0.8rem",
+  fontFamily: 'Poppins, "Helvetica", "Arial", sans-serif',
+  caption: {
+    fontSize: "0.85rem",
   },
   body1: {
-    fontSize: "0.8rem",
-  },
-  body2: {
     fontSize: "0.9rem",
-  },
-  caption: {
-    fontSize: "0.7rem",
   },
 };
 
@@ -57,7 +36,7 @@ const commonComponents = {
   MuiButton: {
     styleOverrides: {
       root: {
-        fontSize: "0.7rem",
+        fontSize: "0.8rem",
       },
       text: {
         color: "default",
@@ -103,8 +82,8 @@ const commonComponents = {
     styleOverrides: {
       root: {
         "& svg": {
-          width: "18px",
-          height: "18px",
+          width: "22px",
+          height: "22px",
         },
       },
     },
@@ -121,14 +100,6 @@ const commonComponents = {
 let lightTheme = createTheme({
   typography: {
     ...commonTypography,
-    h6: {
-      ...commonTypography.h6,
-      color: "#333",
-    },
-    h3: {
-      ...commonTypography.h3,
-      color: "#333",
-    },
   },
   components: {
     ...commonComponents,
@@ -188,14 +159,6 @@ let lightTheme = createTheme({
 let darkTheme = createTheme({
   typography: {
     ...commonTypography,
-    h6: {
-      ...commonTypography.h6,
-      color: "#ccc",
-    },
-    h3: {
-      ...commonTypography.h3,
-      color: "#ccc",
-    },
   },
   components: {
     ...commonComponents,

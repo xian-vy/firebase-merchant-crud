@@ -1,10 +1,16 @@
 import { Box } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoutes";
-import { ROUTES } from "./constants/routes";
 import PublicRoute from "./components/PublicRoutes";
+import { ROUTES } from "./constants/routes";
+import { populateInitialCategories } from "./firebase/inititalCategories";
 function App() {
+  console.log("App.");
+  useEffect(() => {
+    populateInitialCategories();
+  }, []);
+
   return (
     <div className="App">
       <Router>
@@ -38,4 +44,4 @@ function App() {
   );
 }
 
-export default App;
+export default React.memo(App);

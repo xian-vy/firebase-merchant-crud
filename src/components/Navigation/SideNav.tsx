@@ -75,7 +75,7 @@ const SideNav = ({
     () => (
       <div>
         {menuItems.map((item) => (
-          <List key={item.key} sx={{ mx: collapsedDrawer ? 1 : 3, height: "27px", pt: 0, mt: 1 }}>
+          <List key={item.key} sx={{ mx: collapsedDrawer ? 1 : 3, height: "31px", pt: 0, mt: 1 }}>
             <ListItem disablePadding sx={{ minWidth: collapsedDrawer ? "40px" : "auto" }}>
               <ListItemButton
                 component={Link}

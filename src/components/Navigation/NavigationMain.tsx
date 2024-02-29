@@ -12,21 +12,15 @@ import React, { useEffect, useState } from "react";
 
 import BottomNav from "./BottomNav";
 import SideNav from "./SideNav";
-import { DRAWER_WIDTH, DRAWER_WIDTH_COLLAPSED, ICON_LG } from "../../constants/sizes";
+import { DRAWER_WIDTH, DRAWER_WIDTH_COLLAPSED, ICON_LG, ICON_MD } from "../../constants/sizes";
 import { DASHBOARD_PATH, PRODUCTS_PATH, CATEGORIES_PATH } from "../../constants/routes";
 
 const NAV_ITEMS = [
   {
-    key: "Dashboard",
-    path: DASHBOARD_PATH,
-    icon: <DashboardOutlinedIcon sx={{ fontSize: ICON_LG }} />,
-    text: "Dashboard",
-  },
-  {
-    key: "Menu",
+    key: "Items",
     path: PRODUCTS_PATH,
-    icon: <ShoppingBagOutlinedIcon sx={{ fontSize: ICON_LG }} />,
-    text: "Menu",
+    icon: <ShoppingBagOutlinedIcon sx={{ fontSize: ICON_MD }} />,
+    text: "Items",
   },
 ];
 

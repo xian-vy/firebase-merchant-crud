@@ -57,7 +57,7 @@ const ReusableFormActionButton: React.FC<EntryFormButtonProps> = ({
         endIcon={isLoading && type !== "Cancel" ? <CircularProgress size={20} color="inherit" /> : endIcon}
         sx={{
           width: { xs: "100%", sm: soloButton ? "100%" : FORM_BUTTON_WIDTH },
-          mb: { xs: 1, sm: 0 },
+          mb: { xs: 1, sm: soloButton ? 1 : 0 },
         }}
         onClick={onCancel}
       >
