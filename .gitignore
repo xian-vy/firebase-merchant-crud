@@ -29,3 +29,4 @@ src/firebase-debug.log
 src/firestore-debug.log
 src/database-debug.log
 src/ui-debug.log
+.firebase/
