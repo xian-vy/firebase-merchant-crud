@@ -6,7 +6,7 @@ export const setDarkMode = (darkmode: boolean | null) => {
 
 export const getDarkMode = () => {
   const storedDarkMode = localStorage.getItem("darkmode");
-  return storedDarkMode ? JSON.parse(storedDarkMode) : null;
+  return storedDarkMode ? JSON.parse(storedDarkMode) : true;
 };
 
 const themeSlice = createSlice({
