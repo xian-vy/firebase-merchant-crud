@@ -38,16 +38,16 @@ const ProductFormWithVariant = ({ productVariants, setProductVariants }: Props) 
   };
 
   return (
-    <div>
+    <div style={{ marginTop: 0 }}>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="droppable">
           {(provided) => (
             <Stack direction="column" spacing={1} {...provided.droppableProps} ref={provided.innerRef}>
-              <Divider sx={{ mb: 1 }}>Variants</Divider>
+              <Divider>Variants</Divider>
               {productVariants.map((variant, index) => (
                 <Draggable key={index} draggableId={`variant-${index}`} index={index}>
                   {(provided) => (
-                    <div className="drag-handle" {...provided.dragHandleProps}>
+                    <div className="drag-handle" {...provided.dragHandleProps} style={{ marginTop: "15px" }}>
                       <Stack
                         direction="row"
                         alignItems="center"
@@ -100,7 +100,9 @@ const ProductFormWithVariant = ({ productVariants, setProductVariants }: Props) 
                 </Draggable>
               ))}
               {provided.placeholder}
-              <Button onClick={addVariant}>Add Variant</Button>
+              <Button size="small" onClick={addVariant}>
+                Add Variant
+              </Button>
             </Stack>
           )}
         </Droppable>

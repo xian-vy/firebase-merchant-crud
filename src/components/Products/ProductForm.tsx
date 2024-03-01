@@ -146,10 +146,9 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
         <DialogContent>
           <Stack
             component="form"
-            spacing={1.5}
-            px={{ xs: 0.5, sm: 1.5 }}
-            pt={1.5}
-            pb={0}
+            spacing={{ xs: 1.5, md: 2 }}
+            px={{ xs: 0, sm: 1.5 }}
+            py={0}
             onSubmit={(e) => {
               e.preventDefault();
               handleFormSubmit();
@@ -226,14 +225,14 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
 
             {/*  Variant Checkbox -------------------------------------------------------------*/}
 
-            <Stack direction="row" alignItems="center">
+            <Stack direction="row" alignItems="center" style={{ marginTop: "5px", marginBottom: "0" }}>
               <Checkbox
                 checked={withVariant}
                 onClick={(e) => {
                   handleWithVariantChange();
                 }}
               />
-              <Typography variant="caption">Add Variant (eg. Small, Large, Slice)</Typography>
+              <Typography variant="caption">Add Variant (Small,Large)</Typography>
             </Stack>
 
             {/*  Price and Cost for with Variant ------------------------------------------------*/}
