@@ -14,9 +14,10 @@ type Props = {
   menuItems: MenuItemsType[];
   isXSScreen: boolean;
   closeDrawer: () => void;
+  handleSetting: () => void;
 };
 
-const BottomNav = ({ theme, menuItems, isXSScreen, closeDrawer }: Props) => {
+const BottomNav = ({ theme, menuItems, isXSScreen, closeDrawer, handleSetting }: Props) => {
   const location = useLocation();
 
   return (
@@ -49,6 +50,12 @@ const BottomNav = ({ theme, menuItems, isXSScreen, closeDrawer }: Props) => {
             }}
             disableRipple={true}
             disableTouchRipple={true}
+            onClick={(event) => {
+              if (item.key === "Settings") {
+                event.preventDefault();
+                handleSetting();
+              }
+            }}
           />
         ))}
 

@@ -1,3 +1,5 @@
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import {
   Drawer,
   IconButton,
@@ -11,11 +13,9 @@ import {
   useTheme,
 } from "@mui/material";
 import React from "react";
-
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Link, useLocation } from "react-router-dom";
 import { ICON_SM } from "../../constants/sizes";
+import UserAccount from "./UserAccount";
 
 type MenuItemsType = {
   key: string;
@@ -31,7 +31,6 @@ type Props = {
   toggleDrawerCollapse: () => void;
   drawerOpen: boolean;
   handleSetting: () => void;
-  handleAbout: () => void;
 };
 
 const SideNav = ({
@@ -42,7 +41,6 @@ const SideNav = ({
   toggleDrawerCollapse,
   drawerOpen,
   handleSetting,
-  handleAbout,
 }: Props) => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
@@ -57,7 +55,7 @@ const SideNav = ({
         boxSizing: "border-box",
         height: { xs: "auto", sm: "100vh" },
         width: { xs: "96%", sm: drawerSize },
-        pb: { xs: 1.5, md: 0 },
+        py: { xs: 1.5, md: 1 },
         mx: { xs: "auto", md: 0 },
         borderTopLeftRadius: { xs: 10, sm: 0 },
         borderTopRightRadius: { xs: 10, sm: 0 },
@@ -74,14 +72,20 @@ const SideNav = ({
   const drawer = React.useMemo(
     () => (
       <div>
+        <UserAccount collapsedDrawer={collapsedDrawer} />
         {menuItems.map((item) => (
-          <List key={item.key} sx={{ mx: collapsedDrawer ? 1 : 3, height: "31px", pt: 0, mt: 1 }}>
+          <List key={item.key} sx={{ mx: collapsedDrawer ? 1 : 3, height: "32px", pt: 0, mt: 1 }}>
             <ListItem disablePadding sx={{ minWidth: collapsedDrawer ? "40px" : "auto" }}>
               <ListItemButton
                 component={Link}
                 to={item.path}
                 sx={{
-                  backgroundColor: location.pathname === item.path ? (isDarkMode ? "#333" : "#eaeaea") : "",
+                  border:
+                    location.pathname === item.path
+                      ? isDarkMode
+                        ? "1px solid #333"
+                        : "1px solid #ccc"
+                      : "solid 1px transparent",
                   py: 0.4,
                   borderRadius: 4,
                   display: "flex",
@@ -89,7 +93,12 @@ const SideNav = ({
                   px: collapsedDrawer ? 0.5 : 2,
                 }}
                 onClick={(event) => {
-                  toggleDrawer();
+                  if (item.key === "Settings") {
+                    event.preventDefault();
+                    handleSetting();
+                  } else if (!isMdScreen) {
+                    toggleDrawer();
+                  }
                 }}
               >
                 <ListItemIcon
@@ -122,7 +131,7 @@ const SideNav = ({
         <Stack
           direction="row"
           alignItems="center"
-          justifyContent={{ xs: "center", md: collapsedDrawer ? "center" : "space-between" }}
+          justifyContent={{ xs: "center", md: collapsedDrawer ? "center" : "flex-end" }}
           mt={2}
           mb={1}
           px={2}

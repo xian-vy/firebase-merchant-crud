@@ -1,38 +1,18 @@
-import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
-import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
-import PrintOutlinedIcon from "@mui/icons-material/PrintOutlined";
-import SavingsOutlinedIcon from "@mui/icons-material/SavingsOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
-import { Box, Dialog, DialogContent, Drawer, useMediaQuery, useTheme } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import React, { useEffect, useState } from "react";
-
+import { DRAWER_WIDTH, DRAWER_WIDTH_COLLAPSED } from "../../constants/sizes";
+import SettingsMain from "../Settings/SettingsMain";
 import BottomNav from "./BottomNav";
 import SideNav from "./SideNav";
-import { DRAWER_WIDTH, DRAWER_WIDTH_COLLAPSED, ICON_LG, ICON_MD } from "../../constants/sizes";
-import { DASHBOARD_PATH, PRODUCTS_PATH, CATEGORIES_PATH } from "../../constants/routes";
-
-const NAV_ITEMS = [
-  {
-    key: "Items",
-    path: PRODUCTS_PATH,
-    icon: <ShoppingBagOutlinedIcon sx={{ fontSize: ICON_MD }} />,
-    text: "Items",
-  },
-];
+import { NAV_ITEMS } from "../../constants/routes";
 
 const NavigationMain = () => {
   const theme = useTheme();
-  const isDarkMode = theme.palette.mode === "dark";
   const isMdScreen = useMediaQuery(theme.breakpoints.up("md"));
   const isLgScreen = useMediaQuery(theme.breakpoints.down("lg"));
   const isXSScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
-  const [openAbout, setOpenAbout] = useState(false);
   const [drawerSize, setDrawerSize] = useState(isMdScreen && isLgScreen ? DRAWER_WIDTH_COLLAPSED : DRAWER_WIDTH);
   const [collapsedDrawer, setCollapsedDrawer] = useState(false);
 
@@ -52,8 +32,8 @@ const NavigationMain = () => {
   };
 
   const handleSetting = () => {
-    handleDrawerToggle();
     setSettingsOpen(true);
+    setDrawerOpen(false);
   };
 
   return (
@@ -65,13 +45,18 @@ const NavigationMain = () => {
           flexShrink: { md: 0 },
         }}
       >
-        <BottomNav isXSScreen={isXSScreen} closeDrawer={handleDrawerToggle} theme={theme} menuItems={NAV_ITEMS} />
+        <BottomNav
+          isXSScreen={isXSScreen}
+          closeDrawer={handleDrawerToggle}
+          theme={theme}
+          menuItems={NAV_ITEMS}
+          handleSetting={handleSetting}
+        />
 
         <SideNav
           collapsedDrawer={collapsedDrawer}
           drawerOpen={drawerOpen}
           drawerSize={drawerSize}
-          handleAbout={() => setOpenAbout(true)}
           handleSetting={handleSetting}
           menuItems={NAV_ITEMS}
           toggleDrawer={handleDrawerToggle}
@@ -79,18 +64,7 @@ const NavigationMain = () => {
         />
       </Box>
 
-      {/* <Drawer
-        anchor="right"
-        open={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        PaperProps={{
-          sx: { background: isDarkMode ? "#1e1e1e" : "#fff", width: 300 },
-        }}
-        sx={{ px: 2 }}
-        transitionDuration={powerSavingMode ? 0 : undefined}
-      >
-        <SettingsForm closeForm={() => setSettingsOpen(false)} loading={isLoading} />
-      </Drawer> */}
+      <SettingsMain onClose={() => setSettingsOpen(false)} open={settingsOpen} />
     </div>
   );
 };
