@@ -12,7 +12,7 @@ import ReusableIconSelection from "../ReusableComponents/ReusableIconSelection";
 import useSnackbarHook from "../hooks/useSnackBarHook";
 
 interface Props {
-  closeForm: () => void;
+  closeForm: (category: CategoryModel | null) => void;
   editCategory: CategoryModel | null;
   isEditMode: boolean;
   open: boolean;
@@ -81,12 +81,13 @@ const CategoryForm: React.FC<Props> = ({ closeForm, editCategory, isEditMode, op
 
     fetchCategories();
     loadIcons();
-  }, []);
+  }, [editCategory]);
 
   const handleFormSubmit = useCallback(async () => {
     if (isEditMode) {
       await updateDocument(localCategory);
       if (!updateError) {
+        closeForm(localCategory);
         openSuccessSnackbar("Category has been Updated!");
       } else {
         console.error("Update Category error", updateError);
@@ -121,7 +122,9 @@ const CategoryForm: React.FC<Props> = ({ closeForm, editCategory, isEditMode, op
         <DialogContent>
           <Stack
             spacing={2}
-            padding={1.5}
+            px={1.5}
+            pt={1.5}
+            pb={0}
             component="form"
             onSubmit={(e) => {
               e.preventDefault();
@@ -131,7 +134,6 @@ const CategoryForm: React.FC<Props> = ({ closeForm, editCategory, isEditMode, op
             <TextField
               size="small"
               required
-              autoFocus
               label="Category Name"
               value={localCategory.name}
               onChange={(e) => {
@@ -167,7 +169,7 @@ const CategoryForm: React.FC<Props> = ({ closeForm, editCategory, isEditMode, op
               <ReusableFormActionButton
                 type="Cancel"
                 disabled={false}
-                onCancel={closeForm}
+                onCancel={() => closeForm(null)}
                 soloButton={true}
                 order={2}
               />

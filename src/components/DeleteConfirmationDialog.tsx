@@ -5,9 +5,10 @@ interface Props {
   open: boolean;
   onConfirm: () => void;
   onCancel: () => void;
+  itemDescription: string;
 }
 
-const DeleteConfirmationDialog = ({ open, onConfirm, onCancel }: Props) => {
+const DeleteConfirmationDialog = ({ open, onConfirm, onCancel, itemDescription }: Props) => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
   return (
@@ -20,10 +21,9 @@ const DeleteConfirmationDialog = ({ open, onConfirm, onCancel }: Props) => {
           sx: { borderRadius: 3, background: isDarkMode ? "#1e1e1e" : "#fff", px: 2, py: 1 },
         }}
       >
-        <DialogTitle sx={{ py: 1 }}>
-          <Typography variant="caption" textAlign="center">
-            Are you sure want to delete this item?
-          </Typography>
+        <DialogTitle sx={{ py: 1 }} align="center">
+          <Typography variant="caption">Are you sure want to delete the item?</Typography>
+          <Typography>{itemDescription}</Typography>
         </DialogTitle>
 
         <DialogActions sx={{ display: "flex", justifyContent: "space-between" }}>

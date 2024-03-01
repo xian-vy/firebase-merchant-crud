@@ -1,10 +1,11 @@
-import { Button, IconButton, InputAdornment, InputBase, Stack, Typography, useTheme } from "@mui/material";
-import React from "react";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import ClearIcon from "@mui/icons-material/Clear";
-import { ICON_MD, ICON_SM } from "../../constants/sizes";
 import AddIcon from "@mui/icons-material/Add";
+import ClearIcon from "@mui/icons-material/Clear";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import { IconButton, InputAdornment, InputBase, Stack, Typography, useTheme } from "@mui/material";
+import React from "react";
+import { ICON_MD, ICON_SM } from "../../constants/sizes";
 import ReusableIconButton from "../ReusableComponents/ReusableIconButton";
+import { ThemeColor } from "../../utils/utils";
 
 interface Props {
   onAddNewProduct: () => void;
@@ -28,7 +29,14 @@ const ProductListHeader = ({ onAddNewProduct, onSearch }: Props) => {
 
   return (
     <div>
-      <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center" px={2}>
+      <Stack
+        direction="row"
+        spacing={1}
+        justifyContent="space-between"
+        alignItems="center"
+        px={2}
+        mx={{ xs: 0, md: 5, lg: 20, xl: 40 }}
+      >
         <Stack
           sx={{
             border: `solid 1px ${isDarkMode ? "#333" : "#ccc"} `,
@@ -62,7 +70,9 @@ const ProductListHeader = ({ onAddNewProduct, onSearch }: Props) => {
         </Stack>
 
         <ReusableIconButton onClick={onAddNewProduct} type="filter">
-          <Typography variant="caption">New</Typography>
+          <Typography variant="caption" sx={{ color: ThemeColor(theme) }}>
+            New
+          </Typography>
           <AddIcon sx={{ fontSize: ICON_MD }} />
         </ReusableIconButton>
       </Stack>

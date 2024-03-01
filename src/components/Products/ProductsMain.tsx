@@ -1,18 +1,24 @@
-import { Stack } from "@mui/material";
+import { Paper, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import { CategoryModel } from "../../models/CategoryModel";
 import CategoryList from "../Category/CategoryList";
-import ProductForm from "./ProductForm";
+import SelectedCategory from "../Category/SelectedCategory";
+import ReusableFallbackLoading from "../ReusableComponents/ReusableFallbackLoading";
 import ProductListHeader from "./ProductListHeader";
-import ProductsList from "./ProductsList";
+
+const ProductForm = React.lazy(() => import("./ProductForm"));
+const ProductsList = React.lazy(() => import("./ProductsList"));
 
 const ProductsMain = () => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const [addProduct, setAddProduct] = useState(false);
   const [searchValue, setSearchValue] = React.useState("");
-
+  const [editModeCategory, setEditModeCategory] = useState(false);
   const [category, setNewCategory] = useState<CategoryModel | null>(null);
 
   const handleCategoryChange = (category: CategoryModel | null) => {
+    setEditModeCategory(false);
     setNewCategory(category);
   };
 
@@ -24,21 +30,37 @@ const ProductsMain = () => {
     setSearchValue(searchString);
   };
 
+  const handleReset = (newCategory: CategoryModel | null) => {
+    setEditModeCategory(false);
+    setNewCategory(newCategory);
+  };
+
   return (
-    <Stack sx={{ py: 2 }}>
-      <CategoryList onCategorySelect={handleCategoryChange} selectedCategory={category} />
+    <Paper sx={{ py: 2, borderRadius: 3 }} variant={isDarkMode ? "elevation" : "outlined"}>
+      <CategoryList
+        onCategorySelect={handleCategoryChange}
+        selectedCategory={category}
+        editMode={editModeCategory}
+        resetModeAndUpdateCategory={handleReset}
+      />
 
       <ProductListHeader onAddNewProduct={handleAddNewProduct} onSearch={handleSearch} />
 
-      <ProductsList selectedCategory={category} searchFilter={searchValue} />
+      <SelectedCategory category={category} onEditClick={() => setEditModeCategory(true)} />
 
-      <ProductForm
-        onCancel={() => setAddProduct(false)}
-        isEditMode={false}
-        selectedCategory={category}
-        open={addProduct}
-      />
-    </Stack>
+      <React.Suspense fallback={<ReusableFallbackLoading />}>
+        <ProductsList selectedCategory={category} searchFilter={searchValue} />
+      </React.Suspense>
+
+      <React.Suspense fallback={<ReusableFallbackLoading />}>
+        <ProductForm
+          onCancel={() => setAddProduct(false)}
+          isEditMode={false}
+          selectedCategory={category}
+          open={addProduct}
+        />
+      </React.Suspense>
+    </Paper>
   );
 };
 

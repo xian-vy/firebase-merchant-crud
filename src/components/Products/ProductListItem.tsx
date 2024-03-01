@@ -48,7 +48,7 @@ interface Props {
   onActionSelect: (action: string, productToEdit: ProductModel) => void;
 }
 
-export default function ProductListItem({ product, productCategory, onActionSelect }: Props) {
+function ProductListItem({ product, productCategory, onActionSelect }: Props) {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
   const [expanded, setExpanded] = React.useState(false);
@@ -68,11 +68,11 @@ export default function ProductListItem({ product, productCategory, onActionSele
 
   const variantCount = product.variants?.length;
   return (
-    <Card sx={{ borderRadius: 3 }}>
+    <Card elevation={isDarkMode ? 2 : 0} sx={{ borderRadius: 3 }} variant={isDarkMode ? "elevation" : "outlined"}>
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: productCategory?.color, width: 32, height: 32 }} aria-label="icon">
-            {productCategory.icon && renderIcon(productCategory?.icon, isDarkMode ? "#333" : "#fff")}
+          <Avatar sx={{ bgcolor: "inherit", width: 26, height: 26 }} aria-label="icon">
+            {productCategory.icon && renderIcon(productCategory?.icon, productCategory?.color)}
           </Avatar>
         }
         action={
@@ -88,15 +88,6 @@ export default function ProductListItem({ product, productCategory, onActionSele
         }
         sx={{ py: 1 }}
       />
-
-      {/* <Stack
-        sx={{ height: 100, width: "80%", border: "dashed 2px #333", mx: "auto" }}
-        justifyContent="center"
-        alignItems="center"
-      >
-        <PhotoOutlinedIcon />
-        <Typography sx={{ fontSize: "0.7rem" }}>Upload Image</Typography>
-      </Stack> */}
       <Divider sx={{ my: 1, mx: 2 }} />
       <CardContent sx={{ py: 0 }}>
         {/* ---------------------------------Product With Variant ------------------------------------*/}
@@ -104,22 +95,20 @@ export default function ProductListItem({ product, productCategory, onActionSele
           <>
             {product.variants?.map((variant, index) => {
               return (
-                <React.Fragment key={index}>
-                  <Grid container justifyContent="center">
-                    <Grid item xs={4} container alignItems="center" flexDirection="column">
-                      {index === 0 && <Typography sx={{ fontSize: "0.7rem" }}>Variant</Typography>}
-                      <Typography>{variant.name}</Typography>
-                    </Grid>
-                    <Grid item xs={4} container alignItems="center" flexDirection="column">
-                      {index === 0 && <Typography sx={{ fontSize: "0.7rem" }}>Cost</Typography>}
-                      <Typography>{formatNumberWithoutCurrency(variant.cost || 0)}</Typography>
-                    </Grid>
-                    <Grid item xs={4} container alignItems="center" flexDirection="column">
-                      {index === 0 && <Typography sx={{ fontSize: "0.7rem" }}>Cost</Typography>}
-                      <Typography>{formatNumberWithoutCurrency(variant.cost || 0)}</Typography>
-                    </Grid>
+                <Grid container justifyContent="center" key={index} mb={0.5}>
+                  <Grid item xs={4} container alignItems="start" flexDirection="column">
+                    {index === 0 && <Typography>Variant</Typography>}
+                    <Typography sx={{ fontSize: "0.75rem" }}>{variant.name}</Typography>
                   </Grid>
-                </React.Fragment>
+                  <Grid item xs={4} container alignItems="center" flexDirection="column">
+                    {index === 0 && <Typography>Price</Typography>}
+                    <Typography>{formatNumberWithoutCurrency(variant.price || 0)}</Typography>
+                  </Grid>
+                  <Grid item xs={4} container alignItems="center" flexDirection="column">
+                    {index === 0 && <Typography>Cost</Typography>}
+                    <Typography>{formatNumberWithoutCurrency(variant.cost || 0)}</Typography>
+                  </Grid>
+                </Grid>
               );
             })}
           </>
@@ -128,31 +117,30 @@ export default function ProductListItem({ product, productCategory, onActionSele
             {/* ---------------------------------Regular Product ------------------------------------*/}
             <Grid container justifyContent="center">
               <Grid item xs={6} container alignItems="center" flexDirection="column">
-                <Typography sx={{ fontSize: "0.7rem" }}>Price</Typography>
+                <Typography>Price</Typography>
                 <Typography>{formatNumberWithoutCurrency(product.price || 0)}</Typography>
               </Grid>
               <Grid item xs={6} container alignItems="center" flexDirection="column">
-                <Typography sx={{ fontSize: "0.7rem" }}>Cost</Typography>
+                <Typography>Cost</Typography>
                 <Typography>{formatNumberWithoutCurrency(product.cost || 0)}</Typography>
               </Grid>
             </Grid>
           </>
         )}
       </CardContent>
-      <CardActions disableSpacing>
+      <CardActions disableSpacing sx={{ py: 0 }}>
         <ExpandMore expand={expanded} onClick={handleExpandClick} aria-expanded={expanded} aria-label="show more">
           <ExpandMoreIcon />
         </ExpandMore>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography paragraph>Method:</Typography>
-          <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10 minutes.
-          </Typography>
+          <Divider>Other Details</Divider>
+          <Typography paragraph></Typography>
         </CardContent>
       </Collapse>
       {ActionPopover}
     </Card>
   );
 }
+export default React.memo(ProductListItem);

@@ -1,10 +1,8 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import {
-  Button,
   Checkbox,
   Dialog,
   DialogContent,
-  Divider,
   IconButton,
   InputAdornment,
   Stack,
@@ -20,10 +18,11 @@ import useUpdateItemHook from "../../firebase/hooks/useUpdateItemHook";
 import CategoryIcons from "../../media/CategoryIcons";
 import { CategoryModel } from "../../models/CategoryModel";
 import { ProductModel, ProductVariantsModel } from "../../models/ProductModel";
-import { isValidInput } from "../../utils/utils";
 import ReusableCategorySelection from "../ReusableComponents/ReusableCategorySelection";
 import ReusableFormActionButton from "../ReusableComponents/ReusableFormActionButton";
+import ReusableNumericTextfield from "../ReusableComponents/ReusableNumericTextfield";
 import useSnackbarHook from "../hooks/useSnackBarHook";
+import ProductFormWithVariant from "./ProductFormWithVariant";
 
 interface Props {
   newProduct?: ProductModel;
@@ -75,9 +74,13 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
         }));
       }
     }
-  }, [isEditMode, newProduct, categories, categoryLoading]);
+  }, [isEditMode, newProduct, categories, categoryLoading, selectedCategory]);
 
   const handleFormSubmit = useCallback(async () => {
+    if (withVariant && productVariants.length === 0 && localProduct.price === 0 && localProduct.cost === 0) {
+      openSuccessSnackbar("Please enter the Price and Cost", true);
+      return;
+    }
     const finalProduct = {
       ...localProduct,
       ...(withVariant ? { variants: productVariants } : { variants: [] }),
@@ -85,6 +88,8 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
     if (isEditMode) {
       await updateDocument(finalProduct);
       if (!updateError) {
+        setWithVariant(false);
+        onCancel();
         openSuccessSnackbar("Product has been Updated!");
       } else {
         console.error("Update product error", updateError);
@@ -93,7 +98,6 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
     } else {
       await insertDocument(finalProduct);
       if (!createError) {
-        openSuccessSnackbar("New Product has been Added!");
         setLocalProduct({
           ...localProduct,
           name: "",
@@ -104,6 +108,7 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
         });
         setProductVariants([]);
         setWithVariant(false);
+        openSuccessSnackbar("New Product has been Added!");
       } else {
         console.error("Add product error", createError);
         openSuccessSnackbar("Something went wrong.Please Try Again", true);
@@ -118,25 +123,16 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
     }));
   };
 
-  const handleVariantChange = <T extends keyof ProductVariantsModel>(
-    index: number,
-    field: T,
-    value: ProductVariantsModel[T]
-  ) => {
-    const newVariants = [...productVariants];
-    newVariants[index][field] = value;
-    setProductVariants(newVariants);
-  };
   const addVariant = () => {
     setProductVariants([...productVariants, { name: "", price: 0, cost: 0 }]);
   };
 
-  const removeVariant = (index: number) => {
-    const newVariants = [...productVariants];
-    newVariants.splice(index, 1);
-    setProductVariants(newVariants);
+  const handleWithVariantChange = () => {
+    if (!withVariant && productVariants.length === 0) {
+      addVariant();
+    }
+    setWithVariant(!withVariant);
   };
-
   return (
     <div>
       <Dialog
@@ -151,18 +147,19 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
           <Stack
             component="form"
             spacing={1.5}
-            padding={{ xs: 0.5, sm: 1.5 }}
+            px={{ xs: 0.5, sm: 1.5 }}
+            pt={1.5}
+            pb={0}
             onSubmit={(e) => {
               e.preventDefault();
               handleFormSubmit();
             }}
           >
-            {/* Product Item Name */}
+            {/* Product Item Name  -----------------------------------------------------------*/}
             <TextField
               label="Product Item Name"
               variant="outlined"
               size="small"
-              autoFocus
               required
               fullWidth
               value={localProduct.name || ""}
@@ -178,7 +175,7 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
               }}
             />
 
-            {/* Stock QTY and Category */}
+            {/* Stock QTY and Category -----------------------------------------------------------*/}
             <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
               <ReusableCategorySelection
                 label="Category"
@@ -188,136 +185,63 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
                 onChange={handleCategoryChange}
               />
 
-              <TextField
+              <ReusableNumericTextfield
                 label="Stock QTY"
-                variant="outlined"
-                size="small"
-                required
-                fullWidth
-                inputMode="numeric"
-                inputProps={{ inputMode: "numeric" }}
                 value={localProduct.stock || ""}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (isValidInput(value) && value.length <= 8) {
-                    setLocalProduct({
-                      ...localProduct,
-                      stock: parseFloat(value) || 0,
-                    });
-                  }
-                }}
+                onValueChange={(value) =>
+                  setLocalProduct((prevProduct) => ({
+                    ...prevProduct,
+                    stock: value,
+                  }))
+                }
               />
             </Stack>
 
-            {/*  Price and Cost*/}
+            {/*  Price and Cost for Regular ---------------------------------------------*/}
             {!withVariant && (
               <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
-                <TextField
+                <ReusableNumericTextfield
                   label="Price"
-                  variant="outlined"
-                  size="small"
-                  required
-                  fullWidth
-                  inputMode="numeric"
-                  inputProps={{ inputMode: "numeric" }}
                   value={localProduct.price || ""}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (isValidInput(value) && value.length <= 8) {
-                      setLocalProduct({
-                        ...localProduct,
-                        price: parseFloat(value) || 0,
-                      });
-                    }
-                  }}
+                  onValueChange={(value) =>
+                    setLocalProduct((prevProduct) => ({
+                      ...prevProduct,
+                      price: value,
+                    }))
+                  }
                 />
-                <TextField
+
+                <ReusableNumericTextfield
                   label="Cost"
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  required
-                  inputMode="numeric"
-                  inputProps={{ inputMode: "numeric" }}
                   value={localProduct.cost || ""}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (isValidInput(value) && value.length <= 8) {
-                      setLocalProduct({
-                        ...localProduct,
-                        cost: parseFloat(value) || 0,
-                      });
-                    }
-                  }}
+                  onValueChange={(value) =>
+                    setLocalProduct((prevProduct) => ({
+                      ...prevProduct,
+                      cost: value,
+                    }))
+                  }
                 />
               </Stack>
             )}
 
-            {/*  Variant Checkbox */}
+            {/*  Variant Checkbox -------------------------------------------------------------*/}
 
             <Stack direction="row" alignItems="center">
               <Checkbox
                 checked={withVariant}
                 onClick={(e) => {
-                  setWithVariant(!withVariant);
+                  handleWithVariantChange();
                 }}
-                sx={{ height: 20 }}
               />
               <Typography variant="caption">Add Variant (eg. Small, Large, Slice)</Typography>
             </Stack>
 
+            {/*  Price and Cost for with Variant ------------------------------------------------*/}
             {withVariant && (
-              <Stack direction="column" spacing={1}>
-                <Divider>Variants</Divider>
-                {productVariants.map((variant, index) => (
-                  <React.Fragment key={index}>
-                    <Stack direction="row" spacing={1}>
-                      <TextField
-                        label="Variant"
-                        variant="outlined"
-                        size="small"
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        required
-                        fullWidth
-                        value={variant.name}
-                        onChange={(e) => handleVariantChange(index, "name", e.target.value)}
-                      />
-
-                      <TextField
-                        label="Price"
-                        variant="outlined"
-                        size="small"
-                        required
-                        fullWidth
-                        inputMode="numeric"
-                        inputProps={{ inputMode: "numeric" }}
-                        value={variant.price}
-                        onChange={(e) => handleVariantChange(index, "price", parseFloat(e.target.value) || 0)}
-                      />
-                      <TextField
-                        label="Cost"
-                        variant="outlined"
-                        size="small"
-                        fullWidth
-                        required
-                        inputMode="numeric"
-                        inputProps={{ inputMode: "numeric" }}
-                        value={variant.cost}
-                        onChange={(e) => handleVariantChange(index, "cost", parseFloat(e.target.value) || 0)}
-                      />
-                      <IconButton onClick={() => removeVariant(index)}>
-                        <ClearIcon />
-                      </IconButton>
-                    </Stack>
-                  </React.Fragment>
-                ))}
-                <Button onClick={addVariant}>Add Variant</Button>
-              </Stack>
+              <ProductFormWithVariant productVariants={productVariants} setProductVariants={setProductVariants} />
             )}
 
-            {/*  Cancel and Create/Update Button */}
+            {/*  Cancel and Create/Update Button  ----------------------------------------------*/}
             <Stack
               direction={{ xs: "column", sm: "row" }}
               justifyContent="space-between"
