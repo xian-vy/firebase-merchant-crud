@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
-import { db } from "../../firebase"; // Make sure this imports the Firestore instance
+import { db } from "../../firebase";
 
 interface FetchItemsResult<T> {
   items: T[] | null;

@@ -2,13 +2,17 @@ import React, { useState } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 
+interface ID {
+  id: string;
+}
+
 type UpdateDocumentResult<T> = {
   loading: boolean;
   error: string | null;
   updateDocument: (item: T) => Promise<void>;
 };
 
-const useUpdateItemHook = <T extends { [x: string]: any }>(collectionName: string): UpdateDocumentResult<T> => {
+const useUpdateItemHook = <T extends Partial<ID>>(collectionName: string): UpdateDocumentResult<T> => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,7 +20,11 @@ const useUpdateItemHook = <T extends { [x: string]: any }>(collectionName: strin
     setLoading(true);
     setError(null);
     try {
-      await updateDoc(doc(db, collectionName, item.id), item);
+      if (!item.id) {
+        throw new Error("Item ID is undefined");
+      }
+      const docRef = doc(db, collectionName, item.id);
+      await updateDoc(docRef, item);
     } catch (error: any) {
       setError(error.message);
     } finally {

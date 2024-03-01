@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 
+interface ID {
+  id: string;
+}
 type InsertDocumentResult<T> = {
   loading: boolean;
   error: string | null;
@@ -9,7 +12,7 @@ type InsertDocumentResult<T> = {
   insertDocument: (item: T) => Promise<void>;
 };
 
-const useCreateItemHook = <T extends { [x: string]: any }>(collectionName: string): InsertDocumentResult<T> => {
+const useCreateItemHook = <T extends Partial<ID>>(collectionName: string): InsertDocumentResult<T> => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [documentId, setDocumentId] = useState<string | null>(null);
