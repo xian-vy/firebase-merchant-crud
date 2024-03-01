@@ -1,6 +1,6 @@
+import { collection, doc, getDocs, writeBatch } from "firebase/firestore";
 import { COLLECTIONS } from "../constants/collections";
 import { db } from "../firebase";
-import { collection, doc, getDocs, setDoc, writeBatch } from "firebase/firestore";
 
 const colors = [
   "#f44336",
@@ -41,42 +41,19 @@ export const CATEGORIES_MAIN = [
     icon: "Drinks",
   },
   {
-    name: "Sides",
-    color: "#2196f3",
-    icon: "GroceryStore",
-  },
-  {
     name: "Desserts",
     color: "#f44336",
     icon: "IceCream",
   },
   {
+    name: "Coffee",
+    color: "#03a9f4",
+    icon: "Coffee",
+  },
+  {
     name: "Uncategorized",
     color: "#795548",
     icon: "Uncategorized",
-  },
-];
-
-export const CATEGORIES_ITEMS = [
-  {
-    name: "Burger",
-    mainCategory: "Main",
-  },
-  {
-    name: "Shawarma",
-    mainCategory: "Main",
-  },
-  {
-    name: "Fanta",
-    mainCategory: "Drinks",
-  },
-  {
-    name: "Salad",
-    mainCategory: "Sides",
-  },
-  {
-    name: "Ice Cream",
-    mainCategory: "Desserts",
   },
 ];
 
@@ -94,12 +71,8 @@ export async function populateInitialCategories() {
 
     try {
       await batch.commit();
-
-      console.log("Initial main categories added successfully.");
     } catch (error) {
       console.error("Error adding initial main categories:", error);
     }
-  } else {
-    console.log("Initial main categories already exist.");
   }
 }
