@@ -15,6 +15,7 @@ import { handleFavoriteClick } from "./Favorites";
 import ProductListItem from "./ProductListItem";
 import { ACTION_ADD_TO_STORE, ACTION_DELETE, ACTION_EDIT, ACTION_REMOVE_FROM_STORE } from "../../constants/actions";
 import useUpdateItemHook from "../../firebase/hooks/useUpdateItemHook";
+import ReusableBackdrop from "../ReusableComponents/ReusableBackdrop";
 interface Props {
   selectedCategory: CategoryModel | null;
   searchFilter: string;
@@ -64,7 +65,7 @@ const ProductsList = ({ selectedCategory, searchFilter }: Props) => {
       const updatedProduct = { ...product, unavailable: product.unavailable ? false : true };
       await updateDocument(updatedProduct);
       if (!updateError) {
-        openSuccessSnackbar(`Item has been ${product.unavailable ? "added to store" : "removed from store"}`);
+        openSuccessSnackbar(`Item has been ${product.unavailable ? "added to store menu" : "removed from store menu"}`);
       } else {
         console.log("Update availability error", updateError);
       }
@@ -86,25 +87,34 @@ const ProductsList = ({ selectedCategory, searchFilter }: Props) => {
     handleFavoriteClick(favorites, product, setFavoriteLoading, setFavorites, openSuccessSnackbar);
   };
 
-  const filteredAndSortedProducts = useMemo(() => {
-    // Sort products so that favorites come first
-    let sortedProducts = products?.sort((a, b) => {
-      const aIsFavorite = favorites.includes(a.id || "");
-      const bIsFavorite = favorites.includes(b.id || "");
-      if (aIsFavorite && !bIsFavorite) return -1;
-      if (!aIsFavorite && bIsFavorite) return 1;
-      return 0;
+  const filteredProducts = useMemo(() => {
+    if (!products) {
+      return [];
+    }
+    let filteredProducts = [...products];
+    // search and category filters
+    filteredProducts = filteredProducts.filter((product) => {
+      const matchesSearch = product.name.toLowerCase().includes(searchFilter.toLowerCase());
+      const matchesCategory = !selectedCategory || selectedCategory?.id.includes(product.category_id);
+      return matchesSearch && matchesCategory;
     });
-    // apply search and category filters to the sorted list
-    if (sortedProducts) {
-      sortedProducts = sortedProducts.filter((product) => {
-        const matchesSearch = product.name.toLowerCase().includes(searchFilter.toLowerCase());
-        const matchesCategory = !selectedCategory || selectedCategory?.id.includes(product.category_id);
-        return matchesSearch && matchesCategory;
+    return filteredProducts;
+  }, [products, selectedCategory, searchFilter]);
+
+  const sortedProducts = useMemo(() => {
+    let sortedProducts = [...filteredProducts];
+    if (favorites.length > 0) {
+      //favorites comes first
+      sortedProducts.sort((a, b) => {
+        const aIsFavorite = favorites.includes(a.id || "");
+        const bIsFavorite = favorites.includes(b.id || "");
+        if (aIsFavorite && !bIsFavorite) return -1;
+        if (!aIsFavorite && bIsFavorite) return 1;
+        return 0;
       });
     }
     return sortedProducts;
-  }, [products, selectedCategory, searchFilter, favorites]);
+  }, [favorites, filteredProducts]);
 
   return (
     <>
@@ -115,11 +125,11 @@ const ProductsList = ({ selectedCategory, searchFilter }: Props) => {
         <CircularProgress color="inherit" />
       </Backdrop>
       <Box p={2} display="flex" justifyContent="center" minHeight={500}>
-        {!filteredAndSortedProducts ? (
+        {!sortedProducts ? (
           <ReusableFallbackLoading />
         ) : (
           <Masonry columns={{ xs: 1, sm: 2, lg: 3, xl: 4 }} spacing={2} sequential>
-            {filteredAndSortedProducts.map((product) => {
+            {sortedProducts.map((product) => {
               const productCategory = getCategoryDetailsById(product.category_id, categories);
               const categoryIcon = CategoryIcons.find((icon) => icon.name === productCategory?.icon);
               const isFavorite = !!favorites.find((fav) => product.id === fav);
@@ -138,16 +148,17 @@ const ProductsList = ({ selectedCategory, searchFilter }: Props) => {
           </Masonry>
         )}
       </Box>
-
-      <React.Suspense fallback={<ReusableFallbackLoading />}>
-        <ProductForm
-          newProduct={editProduct.product}
-          onCancel={() => setEditProduct({ open: false, product: {} as ProductModel })}
-          isEditMode={editMode}
-          selectedCategory={selectedCategory}
-          open={editProduct.open || false}
-        />
-      </React.Suspense>
+      {editProduct.open && (
+        <React.Suspense fallback={<ReusableBackdrop open={editProduct.open} />}>
+          <ProductForm
+            newProduct={editProduct.product}
+            onCancel={() => setEditProduct({ open: false, product: {} as ProductModel })}
+            isEditMode={editMode}
+            selectedCategory={selectedCategory}
+            open={editProduct.open || false}
+          />
+        </React.Suspense>
+      )}
 
       <DeleteConfirmationDialog
         open={deleteProduct.open || false}
