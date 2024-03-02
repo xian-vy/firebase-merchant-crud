@@ -21,7 +21,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ redirectPath = D
     <ThemeProvider
       theme={darktheme === null ? (deviceTheme ? darkTheme : lightTheme) : darktheme ? darkTheme : lightTheme}
     >
-      <Box sx={{ display: "flex", height: "100vh" }}>
+      <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <NavigationMain />
         <Box

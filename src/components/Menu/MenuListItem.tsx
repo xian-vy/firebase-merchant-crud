@@ -12,7 +12,7 @@ import { ICON_LG, ICON_SM } from "../../constants/sizes";
 import { ProductModel } from "../../models/ProductModel";
 import { formatNumberWithoutCurrency } from "../../utils/utils";
 function renderIcon(iconType: IconType, color: string) {
-  return React.cloneElement(iconType.icon, { style: { color: color, fontSize: ICON_LG } });
+  return React.cloneElement(iconType.icon, { style: { color: color, fontSize: "32px" } });
 }
 
 type IconType = {
@@ -54,7 +54,7 @@ export default function MenuListItem({ product, productCategory }: Props) {
           {productCategory.icon && renderIcon(productCategory?.icon, productCategory?.color)}
         </Stack>
       )}
-      <Stack sx={{ px: 1, height: 10 }}>
+      <Stack sx={{ px: 2, height: 10 }}>
         {product.unavailable && (
           <Divider>
             <Typography sx={{ color: "salmon" }}>Unavailable</Typography>
@@ -62,8 +62,10 @@ export default function MenuListItem({ product, productCategory }: Props) {
         )}
       </Stack>
       <CardContent sx={{ py: 1 }}>
-        <Typography gutterBottom>{product.name}</Typography>
-        <Typography gutterBottom variant="h6" component="div">
+        <Typography gutterBottom textAlign="center">
+          {product.name}
+        </Typography>
+        <Typography gutterBottom variant="h6" component="div" textAlign="center">
           {"$" + formatNumberWithoutCurrency(product.price || 0)}
         </Typography>
       </CardContent>

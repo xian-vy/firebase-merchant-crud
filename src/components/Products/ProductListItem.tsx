@@ -112,20 +112,20 @@ function ProductListItem({ product, productCategory, onActionSelect, isFavorite,
                   src={product.img}
                   loading="lazy"
                   style={{
-                    width: "50px",
-                    height: "50px",
-                    borderRadius: "15%",
+                    width: "70px",
+                    height: "70px",
+                    borderRadius: "20%",
                     objectFit: "cover",
                     objectPosition: "center",
-                    boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                    boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.1)",
                     cursor: "pointer",
                   }}
                 />
               ) : (
                 <Stack
                   sx={{
-                    height: 50,
-                    width: 50,
+                    height: 70,
+                    width: 70,
                     borderRadius: 2,
                     border: `dashed 1px ${isDarkMode ? "#333" : "#ccc"}`,
                     display: "flex",
@@ -165,7 +165,7 @@ function ProductListItem({ product, productCategory, onActionSelect, isFavorite,
         <Divider sx={{ my: 1, mx: 2 }}>
           {product.unavailable && (
             <Typography variant="caption" sx={{ color: "salmon" }}>
-              Unvailable
+              Unvailable in Store
             </Typography>
           )}
         </Divider>

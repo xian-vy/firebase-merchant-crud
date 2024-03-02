@@ -8,6 +8,7 @@ import { CategoryModel } from "../../models/CategoryModel";
 import ReusableFallbackLoading from "../ReusableComponents/ReusableFallbackLoading";
 import { getProductCountPerCategory } from "../../firebase/utils";
 import { ProductModel } from "../../models/ProductModel";
+import ReusableBackdrop from "../ReusableComponents/ReusableBackdrop";
 
 function renderIcon(icon: React.ReactElement, color: string) {
   return React.cloneElement(icon, { style: { color: color, fontSize: ICON_MD } });
@@ -122,14 +123,16 @@ const CategoryList = ({
         </Stack>
       )}
 
-      <React.Suspense fallback={<ReusableFallbackLoading />}>
-        <CategoryForm
-          closeForm={handleReset}
-          editCategory={editCategory.category}
-          isEditMode={editMode || false}
-          open={editCategory.open}
-        />
-      </React.Suspense>
+      {editCategory.open && (
+        <React.Suspense fallback={<ReusableBackdrop open={editCategory.open} />}>
+          <CategoryForm
+            closeForm={handleReset}
+            editCategory={editCategory.category}
+            isEditMode={editMode || false}
+            open={editCategory.open}
+          />
+        </React.Suspense>
+      )}
     </div>
   );
 };

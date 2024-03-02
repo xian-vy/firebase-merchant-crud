@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import { CategoryModel } from "../../models/CategoryModel";
 import CategoryList from "../Category/CategoryList";
 import SelectedCategory from "../Category/SelectedCategory";
-import ReusableFallbackLoading from "../ReusableComponents/ReusableFallbackLoading";
 import ProductListHeader from "./ProductListHeader";
+import ReusableBackdrop from "../ReusableComponents/ReusableBackdrop";
+import ProductsList from "./ProductsList";
 
 const ProductForm = React.lazy(() => import("./ProductForm"));
-const ProductsList = React.lazy(() => import("./ProductsList"));
 
 const ProductsMain = () => {
   const theme = useTheme();
@@ -49,18 +49,18 @@ const ProductsMain = () => {
 
       <SelectedCategory category={category} onEditClick={() => setEditModeCategory(true)} isPrivate={true} />
 
-      <React.Suspense fallback={<ReusableFallbackLoading />}>
-        <ProductsList selectedCategory={category} searchFilter={searchValue} />
-      </React.Suspense>
+      <ProductsList selectedCategory={category} searchFilter={searchValue} />
 
-      <React.Suspense fallback={<ReusableFallbackLoading />}>
-        <ProductForm
-          onCancel={() => setAddProduct(false)}
-          isEditMode={false}
-          selectedCategory={category}
-          open={addProduct}
-        />
-      </React.Suspense>
+      {addProduct && (
+        <React.Suspense fallback={<ReusableBackdrop open={addProduct} />}>
+          <ProductForm
+            onCancel={() => setAddProduct(false)}
+            isEditMode={false}
+            selectedCategory={category}
+            open={addProduct}
+          />
+        </React.Suspense>
+      )}
     </Paper>
   );
 };
