@@ -6,6 +6,8 @@ import { useFetchItems } from "../../firebase/hooks/useFetchItemsHook";
 import CategoryIcons from "../../media/CategoryIcons";
 import { CategoryModel } from "../../models/CategoryModel";
 import ReusableFallbackLoading from "../ReusableComponents/ReusableFallbackLoading";
+import { getProductCountPerCategory } from "../../firebase/utils";
+import { ProductModel } from "../../models/ProductModel";
 
 function renderIcon(icon: React.ReactElement, color: string) {
   return React.cloneElement(icon, { style: { color: color, fontSize: ICON_MD } });
@@ -16,13 +18,22 @@ interface Props {
   selectedCategory: CategoryModel | null;
   editMode: boolean;
   resetModeAndUpdateCategory: (category: CategoryModel | null) => void;
+  isPrivate?: boolean;
 }
 
 const CategoryForm = React.lazy(() => import("./CategoryForm"));
 
-const CategoryList = ({ onCategorySelect, selectedCategory, editMode, resetModeAndUpdateCategory }: Props) => {
+const CategoryList = ({
+  onCategorySelect,
+  selectedCategory,
+  editMode,
+  resetModeAndUpdateCategory,
+  isPrivate,
+}: Props) => {
   const theme = useTheme();
-  const { items: categories, loading, error } = useFetchItems<CategoryModel>(COLLECTIONS.Categories);
+  const { items: categories } = useFetchItems<CategoryModel>(COLLECTIONS.Categories);
+  const { items: products } = useFetchItems<ProductModel>(COLLECTIONS.Products);
+
   const [editCategory, setEditCategory] = useState<{ open: boolean; category: CategoryModel | null }>({
     open: false,
     category: null,
@@ -45,32 +56,30 @@ const CategoryList = ({ onCategorySelect, selectedCategory, editMode, resetModeA
 
   return (
     <div style={{ width: "100%" }}>
-      {loading ? (
+      {!categories || !products ? (
         <ReusableFallbackLoading />
       ) : (
         <Stack direction="row" justifyContent="center" flexWrap="wrap" padding={1}>
           {/* "New" button as slide item */}
-
-          <Paper
-            sx={{
-              ...CATEGORY_ITEM_STYLE,
-              height: { xs: 32, sm: "auto" },
-              ":hover": {
-                border: `solid 1px ${theme.palette.success.main}`,
-              },
-            }}
-            variant="outlined"
-            onClick={handleAddNewCategory}
-          >
-            <Typography>New</Typography>
-          </Paper>
-
+          {isPrivate && (
+            <Paper
+              sx={{
+                ...CATEGORY_ITEM_STYLE,
+                ":hover": {
+                  border: `solid 1px ${theme.palette.success.main}`,
+                },
+              }}
+              variant="outlined"
+              onClick={handleAddNewCategory}
+            >
+              <Typography>New</Typography>
+            </Paper>
+          )}
           {/* "All" button as slide item */}
 
           <Paper
             sx={{
               ...CATEGORY_ITEM_STYLE,
-              height: { xs: 32, sm: "auto" },
               border: `solid 1px ${!selectedCategory ? theme.palette.primary.main : "inherit"}`,
             }}
             variant="outlined"
@@ -83,12 +92,14 @@ const CategoryList = ({ onCategorySelect, selectedCategory, editMode, resetModeA
             categories.map((category) => {
               const categoryIcon = CategoryIcons.find((icon) => icon.name === category.icon);
               const name = category.name;
+              const productPerCategory = getProductCountPerCategory(products, category);
+
               return (
                 <Paper
                   key={category.id}
                   sx={{
                     ...CATEGORY_ITEM_STYLE,
-                    height: { xs: 32, sm: "auto" },
+
                     border: `solid 1px ${selectedCategory === category ? category.color : "inherit"}`,
                   }}
                   variant="outlined"
@@ -98,9 +109,13 @@ const CategoryList = ({ onCategorySelect, selectedCategory, editMode, resetModeA
                   }}
                 >
                   {categoryIcon && renderIcon(categoryIcon.icon, category.color)}
-                  <Typography ml={0.5} sx={{ userSelect: "none" }}>
-                    {name}
-                  </Typography>
+                  <Stack direction="column" ml={0.5}>
+                    <Typography sx={{ userSelect: "none", height: "1rem" }}>{name}</Typography>
+                    <Typography sx={{ fontSize: "0.7rem", height: "0.9rem", color: "#999" }}>
+                      {productPerCategory}
+                      {" item"}
+                    </Typography>
+                  </Stack>
                 </Paper>
               );
             })}
