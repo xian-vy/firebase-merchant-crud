@@ -1,8 +1,8 @@
 import Favorite from "@mui/icons-material/Favorite";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Checkbox, Divider, Grid, useTheme } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
+import PhotoOutlinedIcon from "@mui/icons-material/PhotoOutlined";
+import { Checkbox, Divider, Grid, Stack, Tooltip, useTheme } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
@@ -10,13 +10,12 @@ import CardHeader from "@mui/material/CardHeader";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import React from "react";
-import { ICON_MD } from "../../constants/sizes";
+import { ICON_SM } from "../../constants/sizes";
 import { ProductModel } from "../../models/ProductModel";
-import { formatNumberWithoutCurrency } from "../../utils/utils";
+import { formatNumberWithoutCurrency, useResponsiveCharLimit } from "../../utils/utils";
 import { useMoreActionHook } from "../hooks/useMoreActionHook";
-
 function renderIcon(iconType: IconType, color: string) {
-  return React.cloneElement(iconType.icon, { style: { color: color, fontSize: ICON_MD } });
+  return React.cloneElement(iconType.icon, { style: { color: color, fontSize: ICON_SM } });
 }
 
 type IconType = {
@@ -38,7 +37,7 @@ interface Props {
 function ProductListItem({ product, productCategory, onActionSelect, isFavorite, onFavoriteClick }: Props) {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
-
+  const charLimit = useResponsiveCharLimit(theme);
   const handleAction = (action: string, productToEdit: ProductModel) => {
     onActionSelect(action, productToEdit);
     handleActionClose();
@@ -52,29 +51,48 @@ function ProductListItem({ product, productCategory, onActionSelect, isFavorite,
   return (
     <>
       <Card elevation={isDarkMode ? 2 : 0} sx={{ borderRadius: 3 }} variant={isDarkMode ? "elevation" : "outlined"}>
-        {/* ---------------------------------Product Name,Category and Stock------------------------------------*/}
+        {/* ---------------------Product Name,Category and Stock--------------------*/}
         <CardHeader
           avatar={
-            <Avatar sx={{ bgcolor: "inherit", width: 26, height: 26 }} aria-label="icon">
-              {productCategory.icon && renderIcon(productCategory?.icon, productCategory?.color)}
-            </Avatar>
+            <Stack
+              sx={{
+                height: 50,
+                width: 50,
+                borderRadius: 2,
+                border: `dashed 1px ${isDarkMode ? "#333" : "#ccc"}`,
+              }}
+              justifyContent="center"
+              alignItems="center"
+            >
+              <PhotoOutlinedIcon fontSize="small" />
+              <Typography sx={{ fontSize: "0.6rem" }}>Upload</Typography>
+            </Stack>
           }
           action={
             <IconButton aria-label="settings" onClick={(event) => handleActionOpen(event, product)}>
               <MoreVertIcon />
             </IconButton>
           }
-          title={product.name}
+          title={
+            <Stack direction="row" alignItems="center" ml={-0.5}>
+              {productCategory.icon && renderIcon(productCategory?.icon, productCategory?.color)}
+              <Tooltip title={product.name} sx={{ cursor: "pointer" }}>
+                <Typography align="left" ml={0.5}>
+                  {product.name.length > charLimit ? product.name.substring(0, charLimit) + ".." : product.name}
+                </Typography>
+              </Tooltip>
+            </Stack>
+          }
           subheader={
             <Typography sx={{ fontSize: "0.8rem", mr: 0.5 }}>
               {"Stock "} {product.stock}{" "}
             </Typography>
           }
-          sx={{ py: 1 }}
+          sx={{ pt: 1, pb: 0.5 }}
         />
         <Divider sx={{ my: 1, mx: 2 }} />
         <CardContent sx={{ py: 0 }}>
-          {/* ---------------------------------Product With Variant Price/Cost------------------------------------*/}
+          {/* ---------------------Product With Variant Price/Cost---------------------*/}
           {variantCount && variantCount > 0 ? (
             <>
               {product.variants?.map((variant, index) => {
@@ -98,7 +116,7 @@ function ProductListItem({ product, productCategory, onActionSelect, isFavorite,
             </>
           ) : (
             <>
-              {/* ---------------------------------Regular Product Price/Cost------------------------------------*/}
+              {/* ---------------------Regular Product Price/Cost---------------------*/}
               <Grid container justifyContent="center">
                 <Grid item xs={6} container alignItems="center" flexDirection="column">
                   <Typography>Price</Typography>

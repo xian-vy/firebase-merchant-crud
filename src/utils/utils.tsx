@@ -1,4 +1,4 @@
-import { Theme } from "@mui/material";
+import { Theme, useMediaQuery } from "@mui/material";
 import { CategoryModel } from "../models/CategoryModel";
 
 export const isValidInput = (value: any) => {
@@ -24,4 +24,16 @@ export function ThemeColor(theme: Theme) {
 export const getCategoryDetailsById = (categoryId: string, localCategories: CategoryModel[] | null) => {
   const category = localCategories?.find((category) => category.id === categoryId);
   return category;
+};
+
+export const useResponsiveCharLimit = (theme: Theme) => {
+  const isSmScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
+  let charLimit = 0;
+  if (isSmScreen) {
+    charLimit = 12;
+  } else {
+    charLimit = 17;
+  }
+  return charLimit;
 };
