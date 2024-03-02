@@ -13,6 +13,8 @@ import ReusableFallbackLoading from "../ReusableComponents/ReusableFallbackLoadi
 import useSnackbarHook from "../hooks/useSnackBarHook";
 import { handleFavoriteClick } from "./Favorites";
 import ProductListItem from "./ProductListItem";
+import { ACTION_ADD_TO_STORE, ACTION_DELETE, ACTION_EDIT, ACTION_REMOVE_FROM_STORE } from "../../constants/actions";
+import useUpdateItemHook from "../../firebase/hooks/useUpdateItemHook";
 interface Props {
   selectedCategory: CategoryModel | null;
   searchFilter: string;
@@ -39,6 +41,11 @@ const ProductsList = ({ selectedCategory, searchFilter }: Props) => {
   const { items: products, loading: loadingProducts } = useFetchItems<ProductModel>(COLLECTIONS.Products);
   const { items: categories, loading: loadingCategories } = useFetchItems<CategoryModel>(COLLECTIONS.Categories);
   const { error: deleteError, deleteDocument } = useDeleteItemHook(COLLECTIONS.Products);
+  const {
+    error: updateError,
+    updateDocument,
+    loading: loadingUpdate,
+  } = useUpdateItemHook<ProductModel>(COLLECTIONS.Products);
 
   useEffect(() => {
     const storedFavorites = localStorage.getItem("favorites");
@@ -47,12 +54,20 @@ const ProductsList = ({ selectedCategory, searchFilter }: Props) => {
     }
   }, []);
 
-  const handleAction = (action: string, product: ProductModel) => {
-    if (action === "Edit") {
+  const handleAction = async (action: string, product: ProductModel) => {
+    if (action === ACTION_EDIT) {
       setEditMode(true);
       setEditProduct({ open: true, product: product });
-    } else {
+    } else if (action === ACTION_DELETE) {
       setDeleteProduct({ open: true, product: product });
+    } else if (action === ACTION_ADD_TO_STORE || action === ACTION_REMOVE_FROM_STORE) {
+      const updatedProduct = { ...product, unavailable: product.unavailable ? false : true };
+      await updateDocument(updatedProduct);
+      if (!updateError) {
+        openSuccessSnackbar(`Item has been ${product.unavailable ? "added to store" : "removed from store"}`);
+      } else {
+        console.log("Update availability error", updateError);
+      }
     }
   };
 
@@ -93,7 +108,10 @@ const ProductsList = ({ selectedCategory, searchFilter }: Props) => {
 
   return (
     <>
-      <Backdrop open={favoriteLoading} sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <Backdrop
+        open={favoriteLoading || loadingUpdate}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
       <Box p={2} display="flex" justifyContent="center" minHeight={500}>
@@ -101,16 +119,17 @@ const ProductsList = ({ selectedCategory, searchFilter }: Props) => {
           <ReusableFallbackLoading />
         ) : (
           <Masonry columns={{ xs: 1, sm: 2, lg: 3, xl: 4 }} spacing={2} sequential>
-            {filteredAndSortedProducts.map((product, index) => {
+            {filteredAndSortedProducts.map((product) => {
               const productCategory = getCategoryDetailsById(product.category_id, categories);
               const categoryIcon = CategoryIcons.find((icon) => icon.name === productCategory?.icon);
               const isFavorite = !!favorites.find((fav) => product.id === fav);
+
               return (
                 <ProductListItem
                   product={product}
                   productCategory={{ color: productCategory?.color || "", icon: categoryIcon }}
                   onActionSelect={handleAction}
-                  key={index}
+                  key={product.id}
                   onFavoriteClick={handleFavorite}
                   isFavorite={isFavorite}
                 />

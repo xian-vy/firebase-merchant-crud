@@ -42,11 +42,12 @@ const ProductsMain = () => {
         selectedCategory={category}
         editMode={editModeCategory}
         resetModeAndUpdateCategory={handleReset}
+        isPrivate={true}
       />
 
-      <ProductListHeader onAddNewProduct={handleAddNewProduct} onSearch={handleSearch} />
+      <ProductListHeader onAddNewProduct={handleAddNewProduct} onSearch={handleSearch} isPrivate={true} />
 
-      <SelectedCategory category={category} onEditClick={() => setEditModeCategory(true)} />
+      <SelectedCategory category={category} onEditClick={() => setEditModeCategory(true)} isPrivate={true} />
 
       <React.Suspense fallback={<ReusableFallbackLoading />}>
         <ProductsList selectedCategory={category} searchFilter={searchValue} />

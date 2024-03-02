@@ -22,7 +22,7 @@ import ReusableCategorySelection from "../ReusableComponents/ReusableCategorySel
 import ReusableFormActionButton from "../ReusableComponents/ReusableFormActionButton";
 import ReusableNumericTextfield from "../ReusableComponents/ReusableNumericTextfield";
 import useSnackbarHook from "../hooks/useSnackBarHook";
-import ProductFormWithVariant from "./ProductFormWithVariant";
+import ProductFormVariantDetails from "./ProductFormVariantDetails";
 
 interface Props {
   newProduct?: ProductModel;
@@ -70,7 +70,7 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
           ...prevProduct,
           category_id: selectedCategory
             ? categories.find((cat) => cat.id === selectedCategory.id)?.id || ""
-            : categories[0].id,
+            : categories[0]?.id || "",
         }));
       }
     }
@@ -237,7 +237,7 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
 
             {/*  Price and Cost for with Variant ------------------------------------------------*/}
             {withVariant && (
-              <ProductFormWithVariant productVariants={productVariants} setProductVariants={setProductVariants} />
+              <ProductFormVariantDetails productVariants={productVariants} setProductVariants={setProductVariants} />
             )}
 
             {/*  Cancel and Create/Update Button  ----------------------------------------------*/}

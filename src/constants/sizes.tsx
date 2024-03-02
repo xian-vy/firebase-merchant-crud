@@ -14,7 +14,7 @@ export const ICON_MD = "20px";
 export const ICON_LG = "26px";
 export const FORM_BUTTON_WIDTH = 160;
 export const FORM_BUTTON_WIDTH_XS = 240;
-
+export const MAX_IMG_SIZE = 300; //300kb
 export const CATEGORY_ITEM_STYLE = {
   py: 0.5,
   px: 1,
@@ -27,5 +27,5 @@ export const CATEGORY_ITEM_STYLE = {
   borderRadius: 2,
   WebkitTapHighlightColor: "transparent",
   width: "auto",
-  m: { xs: 0.3, sm: 0.5, md: 1 },
+  m: { xs: 0.5, sm: 0.7, md: 1 },
 };

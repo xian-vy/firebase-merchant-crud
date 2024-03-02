@@ -11,8 +11,9 @@ function renderIcon(icon: React.ReactElement, color: string) {
 interface Props {
   category: CategoryModel | null;
   onEditClick: () => void;
+  isPrivate?: boolean;
 }
-const SelectedCategory = ({ category, onEditClick }: Props) => {
+const SelectedCategory = ({ category, onEditClick, isPrivate }: Props) => {
   const categoryIcon = CategoryIcons.find((icon) => icon.name === category?.icon);
 
   return (
@@ -21,7 +22,9 @@ const SelectedCategory = ({ category, onEditClick }: Props) => {
       <Typography variant="h6" ml={0.3}>
         {category ? category.name : "All Items"}
       </Typography>
-      {category && <EditOutlinedIcon fontSize="small" sx={{ ml: 1, cursor: "pointer" }} onClick={onEditClick} />}
+      {category && isPrivate && (
+        <EditOutlinedIcon fontSize="small" sx={{ ml: 1, cursor: "pointer" }} onClick={onEditClick} />
+      )}
     </Stack>
   );
 };

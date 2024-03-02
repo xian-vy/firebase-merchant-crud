@@ -14,6 +14,9 @@ export interface ProductModel {
   price?: number;
   cost: number;
   stock: number;
+  img?: string;
+  description?: string;
+  unavailable?: boolean;
   dateAdded: Timestamp;
   lastModified: Timestamp;
 }

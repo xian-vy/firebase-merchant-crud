@@ -1,15 +1,15 @@
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
-import Person2OutlinedIcon from "@mui/icons-material/Person2Outlined";
+import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import React from "react";
-import FodderPage from "../components/DummyPage";
+import MenuMain from "../components/Menu/MenuMain";
 import ProductsMain from "../components/Products/ProductsMain";
 import { ICON_MD } from "./sizes";
 export const PRODUCTS_PATH = "/";
 export const CATEGORIES_PATH = "/categories";
 export const DASHBOARD_PATH = "/dashbaord";
 export const DUMMY_PATH = "/dummypage";
-
+export const MENU_PATH = "/menu";
 export const ROUTES = [
   {
     path: PRODUCTS_PATH,
@@ -17,8 +17,8 @@ export const ROUTES = [
     isPrivate: true,
   },
   {
-    path: DUMMY_PATH,
-    element: <FodderPage />,
+    path: MENU_PATH,
+    element: <MenuMain />,
     isPrivate: true,
   },
 ];
@@ -31,10 +31,10 @@ export const NAV_ITEMS = [
     text: "Items",
   },
   {
-    key: "Dummy",
-    path: DUMMY_PATH,
-    icon: <Person2OutlinedIcon sx={{ fontSize: ICON_MD }} />,
-    text: "Dummy",
+    key: "Menu",
+    path: MENU_PATH,
+    icon: <MenuBookOutlinedIcon sx={{ fontSize: ICON_MD }} />,
+    text: "Menu",
   },
 
   { key: "Settings", path: "Settings", icon: <SettingsOutlinedIcon sx={{ fontSize: ICON_MD }} />, text: "Settings" },

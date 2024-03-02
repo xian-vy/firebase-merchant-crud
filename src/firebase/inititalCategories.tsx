@@ -50,11 +50,6 @@ export const CATEGORIES_MAIN = [
     color: "#03a9f4",
     icon: "Coffee",
   },
-  {
-    name: "Uncategorized",
-    color: "#795548",
-    icon: "Uncategorized",
-  },
 ];
 
 export async function populateInitialCategories() {

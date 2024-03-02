@@ -10,8 +10,9 @@ import { ThemeColor } from "../../utils/utils";
 interface Props {
   onAddNewProduct: () => void;
   onSearch: (search: string) => void;
+  isPrivate?: boolean;
 }
-const ProductListHeader = ({ onAddNewProduct, onSearch }: Props) => {
+const ProductListHeader = ({ onAddNewProduct, onSearch, isPrivate }: Props) => {
   const [searchValue, setSearchValue] = React.useState("");
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
@@ -68,13 +69,14 @@ const ProductListHeader = ({ onAddNewProduct, onSearch }: Props) => {
             }}
           />
         </Stack>
-
-        <ReusableIconButton onClick={onAddNewProduct} type="filter">
-          <Typography variant="caption" sx={{ color: ThemeColor(theme) }}>
-            New
-          </Typography>
-          <AddIcon sx={{ fontSize: ICON_MD }} />
-        </ReusableIconButton>
+        {isPrivate && (
+          <ReusableIconButton onClick={onAddNewProduct} type="filter">
+            <Typography variant="caption" sx={{ color: ThemeColor(theme) }}>
+              New
+            </Typography>
+            <AddIcon sx={{ fontSize: ICON_MD }} />
+          </ReusableIconButton>
+        )}
       </Stack>
     </div>
   );
