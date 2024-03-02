@@ -18,7 +18,7 @@ const DeleteConfirmationDialog = ({ open, onConfirm, onCancel, itemDescription }
         maxWidth="xs"
         fullWidth
         PaperProps={{
-          sx: { borderRadius: 3, background: isDarkMode ? "#1e1e1e" : "#fff", px: 2, py: 1 },
+          sx: { borderRadius: 3, background: isDarkMode ? "#1e1e1e" : "#fff", px: { xs: 1, sm: 2 }, py: 1 },
         }}
       >
         <DialogTitle sx={{ py: 1 }} align="center">

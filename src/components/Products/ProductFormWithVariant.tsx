@@ -1,6 +1,6 @@
 import ClearIcon from "@mui/icons-material/Clear";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
-import { Button, Divider, IconButton, Stack, TextField } from "@mui/material";
+import { Button, Divider, Stack, TextField } from "@mui/material";
 import React from "react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
 import { ProductVariantsModel } from "../../models/ProductModel";
@@ -91,9 +91,15 @@ const ProductFormWithVariant = ({ productVariants, setProductVariants }: Props) 
                           value={variant.cost}
                           onChange={(e) => handleVariantChange(index, "cost", parseFloat(e.target.value) || 0)}
                         />
-                        <IconButton onClick={() => removeVariant(index)}>
-                          <ClearIcon fontSize="small" />
-                        </IconButton>
+
+                        <ClearIcon
+                          fontSize="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeVariant(index);
+                          }}
+                          sx={{ cursor: "pointer" }}
+                        />
                       </Stack>
                     </div>
                   )}

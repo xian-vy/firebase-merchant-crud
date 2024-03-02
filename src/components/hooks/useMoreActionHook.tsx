@@ -35,6 +35,9 @@ export const useMoreActionHook = <T,>({ actions, handleAction, disabledCondition
         vertical: "top",
         horizontal: "right",
       }}
+      slotProps={{
+        paper: { style: { minWidth: 120 } },
+      }}
     >
       <List>
         {actions.map((action) => (

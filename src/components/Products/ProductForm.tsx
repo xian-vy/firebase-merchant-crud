@@ -143,12 +143,12 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
           sx: { borderRadius: 3, background: isDarkMode ? "#1e1e1e" : "#fff" },
         }}
       >
-        <DialogContent>
+        <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
           <Stack
             component="form"
             spacing={{ xs: 1.5, md: 2 }}
             px={{ xs: 0, sm: 1.5 }}
-            py={0}
+            py={{ xs: 0, sm: 1.5 }}
             onSubmit={(e) => {
               e.preventDefault();
               handleFormSubmit();
