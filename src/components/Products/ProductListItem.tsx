@@ -73,6 +73,11 @@ function ProductListItem({ product, productCategory, onActionSelect, isFavorite,
           openSuccessSnackbar("Upload Failed, Image should be less than 300kb", true);
           return;
         }
+        const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif"];
+        if (!allowedMimeTypes.includes(file.type)) {
+          openSuccessSnackbar("Upload Failed, Only JPEG, PNG, and GIF images are allowed", true);
+          return;
+        }
         const imgURL = await uploadImage(file);
         const updatedProduct = { ...prod, img: imgURL };
         await updateDocument(updatedProduct);
