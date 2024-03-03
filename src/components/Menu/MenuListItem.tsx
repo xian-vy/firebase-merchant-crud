@@ -28,7 +28,7 @@ type ProductCategoryType = {
 interface Props {
   product: ProductModel;
   productCategory: ProductCategoryType;
-  addToCart: () => void;
+  addToCart: (unavailable: boolean | undefined) => void;
 }
 
 export default function MenuListItem({ product, productCategory, addToCart }: Props) {
@@ -39,7 +39,7 @@ export default function MenuListItem({ product, productCategory, addToCart }: Pr
 
   const handleAddtoCart = () => {
     if (product.variants?.length === 0) {
-      addToCart();
+      addToCart(product.unavailable);
     } else {
       setOpenDialog(true);
     }
@@ -89,7 +89,7 @@ export default function MenuListItem({ product, productCategory, addToCart }: Pr
             checkedIcon={<Favorite style={{ color: isDarkMode ? "#666" : "#FF69B4" }} />}
             checked={false}
           />
-          <IconButton disabled={product.unavailable} onClick={handleAddtoCart}>
+          <IconButton onClick={handleAddtoCart}>
             <AddShoppingCartOutlinedIcon sx={{ fontSize: ICON_SM, cursor: "pointer" }} />
           </IconButton>
         </CardActions>

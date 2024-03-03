@@ -72,9 +72,10 @@ const ProductWithVariantDialog = ({ open, product, onCancel }: Props) => {
                       }`,
                     }}
                     p={2}
+                    mb={2}
                     onClick={() => setSelectedVariant(index)}
                   >
-                    <Typography variant="body2">
+                    <Typography variant="body2" textAlign="center">
                       {"$"}
                       {formatNumberWithoutCurrency(variant.price || 0)}
                     </Typography>

@@ -31,8 +31,12 @@ const MenuList = ({ selectedCategory, searchFilter }: Props) => {
     return filteredProducts;
   }, [products, selectedCategory, searchFilter]);
 
-  const handleAddtoCart = () => {
-    openSuccessSnackbar("Added to Cart!");
+  const handleAddtoCart = (unavailable: boolean | undefined) => {
+    if (unavailable) {
+      openSuccessSnackbar("Item is currently unavailable", true);
+    } else {
+      openSuccessSnackbar("Item Added to Cart!");
+    }
   };
   return (
     <>
