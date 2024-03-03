@@ -1,24 +1,28 @@
 import { Box, Grid } from "@mui/material";
 import React, { useMemo } from "react";
-import { COLLECTIONS } from "../../constants/collections";
-import { useFetchItems } from "../../firebase/hooks/useFetchItemsHook";
+import { useSelector } from "react-redux";
 import CategoryIcons from "../../media/CategoryIcons";
 import { CategoryModel } from "../../models/CategoryModel";
-import { ProductModel } from "../../models/ProductModel";
+import { RootState } from "../../redux/store";
 import { getCategoryDetailsById } from "../../utils/utils";
 import ReusableFallbackLoading from "../ReusableComponents/ReusableFallbackLoading";
 import MenuListItem from "./MenuListItem";
+import useSnackbarHook from "../hooks/useSnackBarHook";
 interface Props {
   selectedCategory: CategoryModel | null;
   searchFilter: string;
 }
 
 const MenuList = ({ selectedCategory, searchFilter }: Props) => {
-  const { items: products, loading: loadingProducts } = useFetchItems<ProductModel>(COLLECTIONS.Products);
-  const { items: categories, loading: loadingCategories } = useFetchItems<CategoryModel>(COLLECTIONS.Categories);
+  const { openSuccessSnackbar, SnackbarComponent } = useSnackbarHook();
+  const products = useSelector((state: RootState) => state.productsSlice.products);
+  const categories = useSelector((state: RootState) => state.categorySlice.categories);
 
   const filteredProducts = useMemo(() => {
-    const filteredProducts = products?.filter((product) => {
+    if (!products) {
+      return [];
+    }
+    const filteredProducts = products.filter((product) => {
       const matchesSearch = product.name.toLowerCase().includes(searchFilter.toLowerCase());
       const matchesCategory = !selectedCategory || selectedCategory?.id.includes(product.category_id);
       return matchesSearch && matchesCategory;
@@ -27,6 +31,9 @@ const MenuList = ({ selectedCategory, searchFilter }: Props) => {
     return filteredProducts;
   }, [products, selectedCategory, searchFilter]);
 
+  const handleAddtoCart = () => {
+    openSuccessSnackbar("Added to Cart!");
+  };
   return (
     <>
       <Box p={2} display="flex" justifyContent="center" minHeight={500}>
@@ -44,6 +51,7 @@ const MenuList = ({ selectedCategory, searchFilter }: Props) => {
                     product={product}
                     key={product.id}
                     productCategory={{ color: productCategory?.color || "", icon: categoryIcon }}
+                    addToCart={handleAddtoCart}
                   />
                 </Grid>
               );
@@ -51,6 +59,7 @@ const MenuList = ({ selectedCategory, searchFilter }: Props) => {
           </Grid>
         )}
       </Box>
+      {SnackbarComponent}
     </>
   );
 };

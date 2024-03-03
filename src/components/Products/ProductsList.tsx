@@ -1,33 +1,35 @@
 import Masonry from "@mui/lab/Masonry";
 import { Backdrop, Box, CircularProgress } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { ACTION_ADD_TO_STORE, ACTION_DELETE, ACTION_EDIT, ACTION_REMOVE_FROM_STORE } from "../../constants/actions";
 import { COLLECTIONS } from "../../constants/collections";
 import useDeleteItemHook from "../../firebase/hooks/useDeleteItemHook";
-import { useFetchItems } from "../../firebase/hooks/useFetchItemsHook";
+import useUpdateItemHook from "../../firebase/hooks/useUpdateItemHook";
 import CategoryIcons from "../../media/CategoryIcons";
 import { CategoryModel } from "../../models/CategoryModel";
 import { ProductModel } from "../../models/ProductModel";
+import { RootState } from "../../redux/store";
 import { getCategoryDetailsById } from "../../utils/utils";
 import DeleteConfirmationDialog from "../DeleteConfirmationDialog";
 import ReusableFallbackLoading from "../ReusableComponents/ReusableFallbackLoading";
 import useSnackbarHook from "../hooks/useSnackBarHook";
 import { handleFavoriteClick } from "./Favorites";
+import ProductForm from "./ProductForm";
 import ProductListItem from "./ProductListItem";
-import { ACTION_ADD_TO_STORE, ACTION_DELETE, ACTION_EDIT, ACTION_REMOVE_FROM_STORE } from "../../constants/actions";
-import useUpdateItemHook from "../../firebase/hooks/useUpdateItemHook";
-import ReusableBackdrop from "../ReusableComponents/ReusableBackdrop";
 interface Props {
   selectedCategory: CategoryModel | null;
   searchFilter: string;
 }
-
-const ProductForm = React.lazy(() => import("./ProductForm"));
 
 const ProductsList = ({ selectedCategory, searchFilter }: Props) => {
   const { openSuccessSnackbar, SnackbarComponent } = useSnackbarHook();
   const [editMode, setEditMode] = useState(false);
   const [favoriteLoading, setFavoriteLoading] = React.useState(false);
   const [favorites, setFavorites] = React.useState<string[]>([]);
+  const products = useSelector((state: RootState) => state.productsSlice.products);
+  const categories = useSelector((state: RootState) => state.categorySlice.categories);
+  const { error: deleteError, deleteDocument } = useDeleteItemHook(COLLECTIONS.Products);
 
   const [editProduct, setEditProduct] = useState({
     open: false,
@@ -39,9 +41,6 @@ const ProductsList = ({ selectedCategory, searchFilter }: Props) => {
     product: {} as ProductModel,
   });
 
-  const { items: products, loading: loadingProducts } = useFetchItems<ProductModel>(COLLECTIONS.Products);
-  const { items: categories, loading: loadingCategories } = useFetchItems<CategoryModel>(COLLECTIONS.Categories);
-  const { error: deleteError, deleteDocument } = useDeleteItemHook(COLLECTIONS.Products);
   const {
     error: updateError,
     updateDocument,
@@ -128,37 +127,36 @@ const ProductsList = ({ selectedCategory, searchFilter }: Props) => {
         {!sortedProducts ? (
           <ReusableFallbackLoading />
         ) : (
-          <Masonry columns={{ xs: 1, sm: 2, lg: 3, xl: 4 }} spacing={2} sequential>
-            {sortedProducts.map((product) => {
-              const productCategory = getCategoryDetailsById(product.category_id, categories);
-              const categoryIcon = CategoryIcons.find((icon) => icon.name === productCategory?.icon);
-              const isFavorite = !!favorites.find((fav) => product.id === fav);
+          <>
+            <Masonry columns={{ xs: 1, sm: 2, lg: 3, xl: 4 }} spacing={2} sequential>
+              {sortedProducts.map((product) => {
+                const productCategory = getCategoryDetailsById(product.category_id, categories);
+                const categoryIcon = CategoryIcons.find((icon) => icon.name === productCategory?.icon);
+                const isFavorite = !!favorites.find((fav) => product.id === fav);
 
-              return (
-                <ProductListItem
-                  product={product}
-                  productCategory={{ color: productCategory?.color || "", icon: categoryIcon }}
-                  onActionSelect={handleAction}
-                  key={product.id}
-                  onFavoriteClick={handleFavorite}
-                  isFavorite={isFavorite}
-                />
-              );
-            })}
-          </Masonry>
+                return (
+                  <ProductListItem
+                    product={product}
+                    productCategory={{ color: productCategory?.color || "", icon: categoryIcon }}
+                    onActionSelect={handleAction}
+                    key={product.id}
+                    onFavoriteClick={handleFavorite}
+                    isFavorite={isFavorite}
+                  />
+                );
+              })}
+            </Masonry>
+          </>
         )}
       </Box>
-      {editProduct.open && (
-        <React.Suspense fallback={<ReusableBackdrop open={editProduct.open} />}>
-          <ProductForm
-            newProduct={editProduct.product}
-            onCancel={() => setEditProduct({ open: false, product: {} as ProductModel })}
-            isEditMode={editMode}
-            selectedCategory={selectedCategory}
-            open={editProduct.open || false}
-          />
-        </React.Suspense>
-      )}
+
+      <ProductForm
+        newProduct={editProduct.product}
+        onCancel={() => setEditProduct({ open: false, product: {} as ProductModel })}
+        isEditMode={editMode}
+        selectedCategory={selectedCategory}
+        open={editProduct.open || false}
+      />
 
       <DeleteConfirmationDialog
         open={deleteProduct.open || false}

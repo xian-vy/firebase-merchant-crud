@@ -11,13 +11,14 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { COLLECTIONS } from "../../constants/collections";
 import useCreateItemHook from "../../firebase/hooks/useCreateItemHook";
-import { useFetchItems } from "../../firebase/hooks/useFetchItemsHook";
 import useUpdateItemHook from "../../firebase/hooks/useUpdateItemHook";
 import CategoryIcons from "../../media/CategoryIcons";
 import { CategoryModel } from "../../models/CategoryModel";
 import { ProductModel, ProductVariantsModel } from "../../models/ProductModel";
+import { RootState } from "../../redux/store";
 import ReusableCategorySelection from "../ReusableComponents/ReusableCategorySelection";
 import ReusableFormActionButton from "../ReusableComponents/ReusableFormActionButton";
 import ReusableNumericTextfield from "../ReusableComponents/ReusableNumericTextfield";
@@ -38,6 +39,7 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
   const { openSuccessSnackbar, SnackbarComponent } = useSnackbarHook();
   const [withVariant, setWithVariant] = useState(false);
   const [productVariants, setProductVariants] = useState<ProductVariantsModel[]>([]);
+  const categories = useSelector((state: RootState) => state.categorySlice.categories);
 
   const {
     loading: createLoading,
@@ -49,11 +51,6 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
     error: updateError,
     updateDocument,
   } = useUpdateItemHook<ProductModel>(COLLECTIONS.Products);
-  const {
-    items: categories,
-    loading: categoryLoading,
-    error: categoryError,
-  } = useFetchItems<CategoryModel>(COLLECTIONS.Categories);
 
   const [localProduct, setLocalProduct] = useState<ProductModel>({} as ProductModel);
 
@@ -65,7 +62,7 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
         setWithVariant((newProduct.variants?.length ?? 0) > 0);
       }
     } else {
-      if (!categoryLoading && categories) {
+      if (categories) {
         setLocalProduct((prevProduct) => ({
           ...prevProduct,
           category_id: selectedCategory
@@ -74,7 +71,7 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
         }));
       }
     }
-  }, [isEditMode, newProduct, categories, categoryLoading, selectedCategory]);
+  }, [isEditMode, newProduct, categories, selectedCategory]);
 
   const handleFormSubmit = useCallback(async () => {
     if (withVariant && productVariants.length === 0 && localProduct.price === 0 && localProduct.cost === 0) {
@@ -87,10 +84,11 @@ const ProductForm = ({ newProduct, onCancel, isEditMode, selectedCategory, open 
     };
     if (isEditMode) {
       await updateDocument(finalProduct);
+
       if (!updateError) {
-        setWithVariant(false);
         onCancel();
         openSuccessSnackbar("Product has been Updated!");
+        setWithVariant(false);
       } else {
         console.error("Update product error", updateError);
         openSuccessSnackbar("Something went wrong.Please Try Again", true);

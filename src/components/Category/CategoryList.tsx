@@ -1,14 +1,14 @@
 import { Paper, Stack, Typography, useTheme } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { COLLECTIONS } from "../../constants/collections";
+import { useSelector } from "react-redux";
 import { CATEGORY_ITEM_STYLE, ICON_MD } from "../../constants/sizes";
-import { useFetchItems } from "../../firebase/hooks/useFetchItemsHook";
+import { getProductCountPerCategory } from "../../firebase/utils";
 import CategoryIcons from "../../media/CategoryIcons";
 import { CategoryModel } from "../../models/CategoryModel";
+import { RootState } from "../../redux/store";
 import ReusableFallbackLoading from "../ReusableComponents/ReusableFallbackLoading";
-import { getProductCountPerCategory } from "../../firebase/utils";
-import { ProductModel } from "../../models/ProductModel";
-import ReusableBackdrop from "../ReusableComponents/ReusableBackdrop";
+import CategoryForm from "./CategoryForm";
+import { ThemeColor } from "../../utils/utils";
 
 function renderIcon(icon: React.ReactElement, color: string) {
   return React.cloneElement(icon, { style: { color: color, fontSize: ICON_MD } });
@@ -22,8 +22,6 @@ interface Props {
   isPrivate?: boolean;
 }
 
-const CategoryForm = React.lazy(() => import("./CategoryForm"));
-
 const CategoryList = ({
   onCategorySelect,
   selectedCategory,
@@ -32,8 +30,9 @@ const CategoryList = ({
   isPrivate,
 }: Props) => {
   const theme = useTheme();
-  const { items: categories } = useFetchItems<CategoryModel>(COLLECTIONS.Categories);
-  const { items: products } = useFetchItems<ProductModel>(COLLECTIONS.Products);
+  const isDarkMode = theme.palette.mode === "dark";
+  const products = useSelector((state: RootState) => state.productsSlice.products);
+  const categories = useSelector((state: RootState) => state.categorySlice.categories);
 
   const [editCategory, setEditCategory] = useState<{ open: boolean; category: CategoryModel | null }>({
     open: false,
@@ -112,7 +111,7 @@ const CategoryList = ({
                   {categoryIcon && renderIcon(categoryIcon.icon, category.color)}
                   <Stack direction="column" ml={0.5}>
                     <Typography sx={{ userSelect: "none", height: "1rem" }}>{name}</Typography>
-                    <Typography sx={{ fontSize: "0.7rem", height: "0.9rem", color: "#999" }}>
+                    <Typography sx={{ fontSize: "0.7rem", height: "0.9rem", color: ThemeColor(theme) }}>
                       {productPerCategory}
                       {" item"}
                     </Typography>
@@ -123,16 +122,12 @@ const CategoryList = ({
         </Stack>
       )}
 
-      {editCategory.open && (
-        <React.Suspense fallback={<ReusableBackdrop open={editCategory.open} />}>
-          <CategoryForm
-            closeForm={handleReset}
-            editCategory={editCategory.category}
-            isEditMode={editMode || false}
-            open={editCategory.open}
-          />
-        </React.Suspense>
-      )}
+      <CategoryForm
+        closeForm={handleReset}
+        editCategory={editCategory.category}
+        isEditMode={editMode || false}
+        open={editCategory.open}
+      />
     </div>
   );
 };
