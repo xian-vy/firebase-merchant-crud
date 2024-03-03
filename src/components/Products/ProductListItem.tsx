@@ -141,9 +141,13 @@ function ProductListItem({ product, productCategory, onActionSelect, isFavorite,
             </label>
           }
           action={
-            <IconButton aria-label="settings" onClick={(event) => handleActionOpen(event, product)}>
-              <MoreVertIcon />
-            </IconButton>
+            <>
+              <Tooltip title="Actions">
+                <IconButton aria-label="settings" onClick={(event) => handleActionOpen(event, product)}>
+                  <MoreVertIcon />
+                </IconButton>
+              </Tooltip>
+            </>
           }
           title={
             <Stack direction="row" alignItems="center" ml={-0.5}>
@@ -209,16 +213,18 @@ function ProductListItem({ product, productCategory, onActionSelect, isFavorite,
           )}
         </CardContent>
         <CardActions disableSpacing sx={{ pb: 1, display: "flex", justifyContent: "flex-end" }}>
-          <Checkbox
-            icon={<FavoriteBorder style={{ color: isDarkMode ? "#666" : "#999" }} />}
-            checkedIcon={<Favorite style={{ color: isDarkMode ? "#666" : "#FF69B4" }} />}
-            sx={{ p: 0.5, mx: 1 }}
-            checked={isFavorite}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              onFavoriteClick(product);
-            }}
-          />
+          <Tooltip title="Add to Favorite">
+            <Checkbox
+              icon={<FavoriteBorder style={{ color: isDarkMode ? "#666" : "#999" }} />}
+              checkedIcon={<Favorite style={{ color: isDarkMode ? "#666" : "#FF69B4" }} />}
+              sx={{ p: 0.5, mx: 1 }}
+              checked={isFavorite}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                onFavoriteClick(product);
+              }}
+            />
+          </Tooltip>
         </CardActions>
 
         {ActionPopover}

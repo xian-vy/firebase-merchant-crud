@@ -2,7 +2,6 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import React from "react";
-import MenuMain from "../components/Menu/MenuMain";
 import ProductsMain from "../components/Products/ProductsMain";
 import { ICON_MD } from "./sizes";
 export const PRODUCTS_PATH = "/";
@@ -10,6 +9,9 @@ export const CATEGORIES_PATH = "/categories";
 export const DASHBOARD_PATH = "/dashbaord";
 export const DUMMY_PATH = "/dummypage";
 export const MENU_PATH = "/menu";
+
+const MenuMain = React.lazy(() => import("../components/Menu/MenuMain"));
+
 export const ROUTES = [
   {
     path: PRODUCTS_PATH,

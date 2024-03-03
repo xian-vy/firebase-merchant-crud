@@ -1,9 +1,9 @@
 import ClearIcon from "@mui/icons-material/Clear";
-import SwapVertIcon from "@mui/icons-material/SwapVert";
-import { Button, Divider, Stack, TextField } from "@mui/material";
+import { Button, Divider, Stack, TextField, Tooltip } from "@mui/material";
 import React from "react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
 import { ProductVariantsModel } from "../../models/ProductModel";
+import DragHandleIcon from "@mui/icons-material/DragHandle";
 
 interface Props {
   productVariants: ProductVariantsModel[];
@@ -55,7 +55,9 @@ const ProductFormWithVariant = ({ productVariants, setProductVariants }: Props) 
                         {...provided.draggableProps}
                         ref={provided.innerRef}
                       >
-                        <SwapVertIcon fontSize="small" />
+                        <Tooltip title="Drag n Drop">
+                          <DragHandleIcon fontSize="small" />
+                        </Tooltip>
                         <TextField
                           label="Variant"
                           variant="outlined"
@@ -91,15 +93,16 @@ const ProductFormWithVariant = ({ productVariants, setProductVariants }: Props) 
                           value={variant.cost}
                           onChange={(e) => handleVariantChange(index, "cost", parseFloat(e.target.value) || 0)}
                         />
-
-                        <ClearIcon
-                          fontSize="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeVariant(index);
-                          }}
-                          sx={{ cursor: "pointer" }}
-                        />
+                        <Tooltip title="Remove">
+                          <ClearIcon
+                            fontSize="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeVariant(index);
+                            }}
+                            sx={{ cursor: "pointer" }}
+                          />
+                        </Tooltip>
                       </Stack>
                     </div>
                   )}

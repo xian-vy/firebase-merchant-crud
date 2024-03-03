@@ -3,11 +3,9 @@ import React, { useState } from "react";
 import { CategoryModel } from "../../models/CategoryModel";
 import CategoryList from "../Category/CategoryList";
 import SelectedCategory from "../Category/SelectedCategory";
+import ProductForm from "./ProductForm";
 import ProductListHeader from "./ProductListHeader";
-import ReusableBackdrop from "../ReusableComponents/ReusableBackdrop";
 import ProductsList from "./ProductsList";
-
-const ProductForm = React.lazy(() => import("./ProductForm"));
 
 const ProductsMain = () => {
   const theme = useTheme();
@@ -51,16 +49,12 @@ const ProductsMain = () => {
 
       <ProductsList selectedCategory={category} searchFilter={searchValue} />
 
-      {addProduct && (
-        <React.Suspense fallback={<ReusableBackdrop open={addProduct} />}>
-          <ProductForm
-            onCancel={() => setAddProduct(false)}
-            isEditMode={false}
-            selectedCategory={category}
-            open={addProduct}
-          />
-        </React.Suspense>
-      )}
+      <ProductForm
+        onCancel={() => setAddProduct(false)}
+        isEditMode={false}
+        selectedCategory={category}
+        open={addProduct}
+      />
     </Paper>
   );
 };

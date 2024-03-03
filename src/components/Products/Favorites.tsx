@@ -25,18 +25,18 @@ export const handleFavoriteClick = (
   let newfavorites: string[] = [];
 
   if (favorites.includes(product.id)) {
-    msg = "Removed";
+    msg = "Removed from";
     newfavorites = favorites.filter((id) => id !== product.id);
     setFavorites(newfavorites);
   } else {
-    msg = "Added";
+    msg = "Added to";
     newfavorites = [...favorites, product.id];
     setFavorites(newfavorites);
   }
   saveFavoritesToStorage(newfavorites);
 
   setTimeout(() => {
-    openSuccessSnackbar(`${msg} to favorites`);
+    openSuccessSnackbar(`${msg} favorites`);
     setLoading(false);
   }, 500);
 };
