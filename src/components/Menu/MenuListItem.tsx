@@ -41,7 +41,11 @@ export default function MenuListItem({ product, productCategory, addToCart }: Pr
     if (product.variants?.length === 0) {
       addToCart(product.unavailable);
     } else {
-      setOpenDialog(true);
+      if (!product.unavailable) {
+        setOpenDialog(true);
+      } else {
+        addToCart(true);
+      }
     }
   };
   return (
